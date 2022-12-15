@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
         urlPatterns = {"/LoginServlet"},
         initParams = {
                 @WebInitParam(name="user", value="Ullas"),
-                @WebInitParam(name="password", value="Ullas")
+                @WebInitParam(name="password", value="uA45@7ula")
         }
 )
 
@@ -32,18 +32,24 @@ public class LoginServlet extends HttpServlet {
 
         //regex for username
         String userRegex = "^[A-Z][a-z]{2,}$";
+        String passRegex = "^[a-z](?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=]).{8,}$";
 
-        if (Pattern.matches("^[A-Z][a-z]{2,}", user)){
-            if(userID.equals(user) && password.equals(pwd)) {
-                request.setAttribute("user", user);
-                request.getRequestDispatcher("LoginSuccess.jsp").forward(request, response);
+        if (Pattern.matches("^[A-Z][a-z]{2,}", user)) {
+            if (Pattern.matches("^[a-z](?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=]).{8,}$", pwd)) {
+                if (userID.equals(user) && password.equals(pwd)) {
+                    request.setAttribute("user", user);
+                    request.getRequestDispatcher("LoginSuccess.jsp").forward(request, response);
+                } else {
+                    RequestDispatcher rd = getServletContext().getRequestDispatcher("/index.html");
+                    PrintWriter out = response.getWriter();
+                    out.println("<font color=red>Either user name or password is wrong.</font>");
+                    rd.include(request, response);
+                }
             } else {
-                RequestDispatcher rd = getServletContext().getRequestDispatcher("/index.html");
                 PrintWriter out = response.getWriter();
-                out.println("<font color=red>Either user name or password is wrong.</font>");
-                rd.include(request, response);
+                out.println("<font color=red>Kindly Enter Correct PASSWORD</font>");
             }
-            }else {
+        }else {
             PrintWriter out = response.getWriter();
             out.println("<font color=red>Kindly Enter Correct USER ID</font>");
         }
